@@ -9,6 +9,9 @@ import threading
 from typing import Optional, List
 import click
 from colorama import init, Fore, Style, Back
+from prompt_toolkit import prompt
+from prompt_toolkit.history import InMemoryHistory
+from prompt_toolkit.styles import Style as PromptStyle
 
 init()
 
@@ -246,17 +249,30 @@ def interactive(ctx):
             return
     
     print(f"\n{Fore.GREEN}🤖 Starting chat with model {model_index}. Type 'quit' or 'exit' to leave.{Style.RESET_ALL}")
+    print(f"{Fore.CYAN}💡 Use ↑/↓ arrow keys to navigate through previous messages{Style.RESET_ALL}")
+    print()
+    
+    history = InMemoryHistory()
+    
+    prompt_style = PromptStyle.from_dict({
+        'prompt': '#ffffff bold',
+    })
     
     while True:
         try:
-            prompt = input(f"{Fore.WHITE}You: {Style.RESET_ALL}")
+            user_input = prompt(
+                "You: ",
+                history=history,
+                style=prompt_style,
+                complete_style='column'
+            )
             
-            if prompt.lower() in ['quit', 'exit', 'bye', 'q']:
+            if user_input.lower() in ['quit', 'exit', 'bye', 'q']:
                 print(f"{Fore.YELLOW}Goodbye!{Style.RESET_ALL}")
                 break
             
-            if prompt.strip():
-                client.chat(model_index, prompt)
+            if user_input.strip():
+                client.chat(model_index, user_input)
             else:
                 client.print_warning("Please enter a message")
                 

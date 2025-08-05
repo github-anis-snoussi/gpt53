@@ -1,3 +1,4 @@
 dnspython==2.4.2
 colorama==0.4.6
 click==8.1.7
+prompt_toolkit==3.0.43
