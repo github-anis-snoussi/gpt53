@@ -6,7 +6,7 @@ const dns2 = require('dns2');
 const { Packet } = dns2;
 
 const CONFIG = {
-  PORT: process.env.PORT ? parseInt(process.env.PORT) : 53,
+  PORT: process.env.PORT ? parseInt(process.env.PORT) : 5333,
   HOST: process.env.HOST || '127.0.0.1',
   DEFAULT_TXT_RESPONSE: process.env.DEFAULT_TXT_RESPONSE || 'This wasn\'t supposed to happen… but here we are.',
   DNS_TTL: process.env.DNS_TTL ? parseInt(process.env.DNS_TTL) : 300,
