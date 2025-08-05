@@ -4,11 +4,44 @@ import dns.resolver
 import dns.exception
 import sys
 import os
+import time
+import threading
 from typing import Optional, List
 import click
 from colorama import init, Fore, Style, Back
 
 init()
+
+class LoadingAnimation:
+    def __init__(self, message: str = "Loading"):
+        self.message = message
+        self.animation_chars = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
+        self.running = False
+        self.thread = None
+        
+    def start(self):
+        if self.running:
+            return
+        self.running = True
+        self.thread = threading.Thread(target=self._animate)
+        self.thread.daemon = True
+        self.thread.start()
+    
+    def stop(self):
+        if not self.running:
+            return
+        self.running = False
+        if self.thread:
+            self.thread.join()
+        print(f"\r{' ' * (len(self.message) + 10)}\r", end="", flush=True)
+    
+    def _animate(self):
+        i = 0
+        while self.running:
+            char = self.animation_chars[i % len(self.animation_chars)]
+            print(f"\r{Fore.CYAN}{char} {self.message}{Style.RESET_ALL}", end="", flush=True)
+            time.sleep(0.1)
+            i += 1
 
 class DNSChatClient:
     def __init__(self, server_host: str = "127.0.0.1", server_port: int = 53):
@@ -42,16 +75,27 @@ class DNSChatClient:
         print(f"{Fore.YELLOW}⚠ {message}{Style.RESET_ALL}")
     
     def print_response(self, message: str):
-        print(f"{Fore.CYAN}{Back.BLACK} AI Response {Style.RESET_ALL}")
-        print(f"{Fore.CYAN}{message}{Style.RESET_ALL}")
+        print(f"{Fore.CYAN}{Back.BLACK}AI Response{Style.RESET_ALL}", end="")
+        print(f"{Fore.CYAN}: {message}{Style.RESET_ALL}")
         print()
     
-    def query_dns(self, query: str, show_query: bool = True) -> Optional[str]:
+    def query_dns(self, query: str, show_query: bool = True, loading_message: str = "Querying DNS") -> Optional[str]:
+        if query == "PING":
+            loading_message = "Testing connection"
+        elif query == "LIST":
+            loading_message = "Fetching models"
+        elif len(query) > 10:
+            loading_message = "Generating response"
+        
+        loader = LoadingAnimation(loading_message)
+        
         try:
             if show_query and query in ["PING", "LIST"]:
                 self.print_info(f"Querying: {query}")
             
+            loader.start()
             response = self.resolver.resolve(query, 'TXT')
+            loader.stop()
             
             if response:
                 txt_record = str(response[0]).strip('"')
@@ -61,24 +105,28 @@ class DNSChatClient:
                 return None
                 
         except dns.resolver.NXDOMAIN:
+            loader.stop()
             self.print_error("Domain not found")
             return None
         except dns.resolver.NoAnswer:
+            loader.stop()
             self.print_error("No TXT record found")
             return None
         except dns.resolver.Timeout:
+            loader.stop()
             self.print_error("DNS query timed out")
             return None
         except dns.exception.DNSException as e:
+            loader.stop()
             self.print_error(f"DNS error: {e}")
             return None
         except Exception as e:
+            loader.stop()
             self.print_error(f"Unexpected error: {e}")
             return None
     
     def ping(self) -> bool:
-        self.print_info("Testing server connectivity...")
-        response = self.query_dns("PING", show_query=True)
+        response = self.query_dns("PING", show_query=False)
         
         if response == "PONG":
             self.print_success("Server is responding!")
@@ -88,8 +136,7 @@ class DNSChatClient:
             return False
     
     def list_models(self) -> Optional[List[str]]:
-        self.print_info("Fetching available models...")
-        response = self.query_dns("LIST", show_query=True)
+        response = self.query_dns("LIST", show_query=False)
         
         if response and response.startswith("Available models:"):
             models_str = response.replace("Available models: ", "")
@@ -119,7 +166,6 @@ class DNSChatClient:
         
         query = f"{self.api_key}{model_index}{prompt}"
         
-        self.print_info(f"Model {model_index}: {prompt[:50]}{'...' if len(prompt) > 50 else ''}")
         response = self.query_dns(query, show_query=False)
         
         if response:
