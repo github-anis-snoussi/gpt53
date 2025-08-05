@@ -71,3 +71,56 @@ openssl rand -base64 32 | tr -d "=+/" | cut -c1-10
 ```
 
 💡 This should be set in the server's `API_KEY` and set by the client when requestion a chat generation.
+
+## 🌐 Deployment
+
+To deploy GPT-53 on a subdomain (e.g., `gpt53.example.com`), follow these steps:
+
+### 1. DNS Configuration
+
+Set up DNS records for your subdomain:
+
+```
+# A record pointing to your server IP
+gpt53.example.com    A    YOUR_SERVER_IP
+
+# NS record to delegate DNS queries to your server (optional, for direct DNS queries)
+gpt53.example.com    NS   gpt53.example.com
+```
+
+### 2. Server Configuration
+
+Configure the server to bind to the appropriate interface:
+
+```bash
+export HOST=0.0.0.0          # Listen on all interfaces
+export PORT=53               # Standard DNS port (requires root/sudo)
+export API_KEY=your-secure-10-char-key
+export OPENAI_API_KEY=your-openai-api-key
+
+# Start the server
+cd server
+npm start
+```
+
+### 3. Firewall Configuration
+
+Ensure your firewall allows DNS traffic:
+
+```bash
+sudo ufw allow 53/udp
+sudo ufw allow 53/tcp
+```
+
+### 4. Client Usage with Subdomain
+
+Once deployed, clients can connect using your subdomain:
+
+```bash
+# Python client
+gpt53 --host gpt53.example.com --port 53 --api-key your-api-key interactive
+
+# Direct DNS queries
+dig @gpt53.example.com TXT "PING"
+dig @gpt53.example.com TXT "your-api-key0Hello world"
+```
