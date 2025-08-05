@@ -17,13 +17,13 @@ A Python client for communicating with DNS-based LLM chat servers. This client p
 pip install dns-chat-client
 
 # Test connectivity
-dns-chat ping
+gpt53 ping
 
 # Start interactive mode
-dns-chat --api-key YOUR_10_CHAR_KEY interactive
+gpt53 --api-key YOUR_10_CHAR_KEY interactive
 
 # Connect to custom server
-dns-chat --host 192.168.1.100 --port 5353 ping
+gpt53 --host 192.168.1.100 --port 5353 ping
 ```
 
 ## Usage
@@ -62,7 +62,7 @@ setup(
     install_requires=requirements,
     entry_points={
         "console_scripts": [
-            "dns-chat=dns_chat:cli",
+            "gpt53=dns_chat:cli",
         ],
     },
 )
