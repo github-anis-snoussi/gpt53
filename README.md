@@ -2,15 +2,15 @@
   <img src="gpt.png" alt="GPT53 Plane" width="500">
 </div>
 
----
-
 # GPT-53: DNS-based LLM Chat System
 
 A complete system for chatting with Large Language Models (LLMs) through DNS TXT record queries. Includes a TypeScript DNS server and Python client for secure, authenticated AI conversations.
 
 ## Demo
 
-https://github.com/user-attachments/assets/demo.mp4
+https://github.com/user-attachments/assets/87f0c881-e5ca-42de-be52-ff0bb871c6cd
+
+
 
 ## Usage
 
