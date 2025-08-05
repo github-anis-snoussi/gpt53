@@ -8,6 +8,10 @@
 
 A complete system for chatting with Large Language Models (LLMs) through DNS TXT record queries. Includes a TypeScript DNS server and Python client for secure, authenticated AI conversations.
 
+## Demo
+
+https://github.com/user-attachments/assets/demo.mp4
+
 ## Usage
 
 ### DNS Query Format
