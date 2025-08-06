@@ -6,6 +6,8 @@
 
 A complete system for chatting with Large Language Models (LLMs) through DNS TXT record queries. Includes a TypeScript DNS server and Python client for secure, authenticated AI conversations.
 
+Designed for restricted network environments where only DNS queries are permitted (like unpaid planes WiFi 😉), enabling access to models like OpenAI o1, GPT-4, Claude, and others. This DNS-based communication can be extended to other applications like chat rooms, file transfer, or any data exchange over DNS infrastructure.
+
 ## Demo
 
 https://github.com/user-attachments/assets/87f0c881-e5ca-42de-be52-ff0bb871c6cd
@@ -128,3 +130,9 @@ gpt53 --host gpt53.example.com --port 53 --api-key your-api-key interactive
 dig @gpt53.example.com TXT "PING"
 dig @gpt53.example.com TXT "your-api-key0Hello world"
 ```
+
+## 📋 TODO
+
+- [ ] **Long Message Support**: Add `START_LONG_MESSAGE` and `END_LONG_MESSAGE` commands to bypass TXT record char limits (use API key as message identifier, server-side message store needed)
+- [ ] **Function Calling**: Add support for function calling in AI responses (return `FUNC_CALL:[function_name]:[base64_encoded_args]`, client executes function and responds with `FUNC_RESULT:[base64_encoded_result]`)
+- [ ] **Long Response Support**: Bypass response length limits with chunked delivery (return `CONTINUE:[chunk_id]` when response exceeds limit, client queries `GET_CHUNK:[chunk_id]:[part_number]`)
