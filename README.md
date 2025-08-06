@@ -133,6 +133,7 @@ dig @gpt53.example.com TXT "your-api-key0Hello world"
 
 ## 📋 TODO
 
-- [ ] **Long Message Support**: Add `START_LONG_MESSAGE` and `END_LONG_MESSAGE` commands to bypass TXT record char limits (use API key as message identifier, server-side message store needed)
-- [ ] **Function Calling**: Add support for function calling in AI responses (return `FUNC_CALL:[function_name]:[base64_encoded_args]`, client executes function and responds with `FUNC_RESULT:[base64_encoded_result]`)
 - [ ] **Long Response Support**: Bypass response length limits with chunked delivery (return `CONTINUE:[chunk_id]` when response exceeds limit, client queries `GET_CHUNK:[chunk_id]:[part_number]`)
+- [ ] **Long Message Support**: Add `START_LONG_MESSAGE` and `END_LONG_MESSAGE` commands to bypass TXT record char limits (use API key as message identifier, server-side message store needed)
+- [ ] **Chat History & Threads**: Add chat history persistence and multiple thread support (commands like `LIST_THREADS`, `SELECT_THREAD:[thread_id]`, `NEW_THREAD`, server-side store required)
+- [ ] **Function Calling**: Add support for function calling in AI responses (return `FUNC_CALL:[function_name]:[base64_encoded_args]`, client executes function and responds with `FUNC_RESULT:[base64_encoded_result]`)
